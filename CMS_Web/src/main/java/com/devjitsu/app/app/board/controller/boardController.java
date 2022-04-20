@@ -1,4 +1,4 @@
-package com.devjitsu.app.board.controller;
+package com.devjitsu.app.app.board.controller;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.devjitsu.app.member.controller;
+package com.devjitsu.app.app.member.controller;
 
 import javax.servlet.http.HttpSession;
 

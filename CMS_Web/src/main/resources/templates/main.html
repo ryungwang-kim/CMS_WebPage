@@ -13,65 +13,9 @@
 }
 </style>
 <body>
-	<table border="1">
-		<tr>
-			<td>보내는 사람</td>
-			<td>
-				<input type="text" id="to" name="to">
-			</td>
-		</tr>
-		<tr aria-colspan="4">
-			<td>받는 사람</td>
-			<td>
-				<input type="text" name="from">
-			</td>
-		</tr>
-		<tr aria-colspan="4">
-			<td>받는 사람</td>
-			<td>
-				<input type="text" name="from">
-			</td>
-		</tr>
-		<tr>
-			<td>이메일 제목</td>
-			<td colspan="3">
-				<input type="text" id="title" name="title">
-			</td>
-		</tr>
-		<tr>
-			<td>내용</td>
-			<td colspan="3">
-				<textarea id="content" name="content"></textarea>
-			</td>
-		</tr>
-	</table>
-	<button type="button" id="sendEmail">보내기</button>
+	<button type="button" onclick="location.href='/member/memberList'">멤버리스트</button>
+	<button type="button" onclick="location.href='/user/login'">로그인</button>
 	<script th:inline="javascript">
-		var sendList = new Array();
-		$("#sendEmail").on("click", function(){
-			location.href="/member/memberList";
-			/*
-			$.each($("input[name=from]"), function(i){
-				sendList[i] = $(this).val();
-			});
-			
-			console.log(sendList);
-			var formData = new FormData(document.getElementById("sendList"));
-			formData.append("sendList", sendList);
-			
-			$.ajax({
-				url:"/send",
-				data : formData,
-				processData:false,
-				contentType:false,
-				type : "POST",
-				dataType : 'json',
-				success : function(){
-					alert("성공");
-				}
-			});
-			*/
-		});
 	</script>
 </body>
 </html>

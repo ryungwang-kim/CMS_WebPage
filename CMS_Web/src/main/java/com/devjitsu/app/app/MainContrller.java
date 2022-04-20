@@ -13,7 +13,7 @@ public class MainContrller {
         return "main";
     }
 	
-	@GetMapping("/user/login.do")
+	@GetMapping("/user/login")
 	public String login() {
 		
 		return "/user/login"; // 파일경로
