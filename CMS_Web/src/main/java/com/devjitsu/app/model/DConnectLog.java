@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.devjitsu.app.app.log.dto.PageLogDTO;
+import com.devjitsu.app.app.log.dto.ConnectLogDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,40 +22,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name = "D_WEB_PAGE_LOG", schema = "WEB")
-public class DPageLog {
+@Table(name = "D_WEB_CONNECT_LOG", schema = "WEB")
+public class DConnectLog {
 
 	@Builder
-	public DPageLog(PageLogDTO dto) {
-		this.ip = dto.getIp();
-		this.memNo = dto.getMemNo();
-		this.memId = dto.getMemId();
-		this.menuNm = dto.getMenuNm();
-		this.requestUrl = dto.getRequestUrl();
-	}
+    public DConnectLog(ConnectLogDTO dto){
+        this.memNo = dto.getMemNo();
+        this.memId = dto.getMemId();
+        this.ip = dto.getIp();
+        this.logType = dto.getLogType();
+    }
 	
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LOG_NO")
+    @Column(name = "CONNECT_LOG_NO")
     private Long logNo;
-
-    @Column(name = "MEM_NO")
+	
+	@Column(name = "MEM_NO", updatable = false, nullable = false)
     private Long memNo;
-    
-    @Column(name = "MEM_ID", length = 50)
+
+    @Column(name = "MEM_ID", length = 50, updatable = false, nullable = false)
     private String memId;
     
     @Column(name = "IP", length = 50, updatable = false, nullable = false)
     private String ip;
 
-    @Column(name = "REQUEST_URL", columnDefinition = "TEXT", updatable = false, nullable = false)
-    private String requestUrl;
-
-    @Column(name = "MENU_NM", updatable = false, nullable = false)
-    private String menuNm;
-
     @Column(name = "LOG_TIME", updatable = false, nullable = false)
     @CreationTimestamp
     private Date logTime;
     
+    @Column(name = "LOG_TYPE", length = 50, updatable = false, nullable = false)
+    private String logType;
 }

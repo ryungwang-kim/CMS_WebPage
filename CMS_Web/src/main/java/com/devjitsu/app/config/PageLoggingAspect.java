@@ -44,12 +44,14 @@ public class PageLoggingAspect {
 		HttpSession session = request.getSession();
 		PageLogDTO logDto = new PageLogDTO();
 
-		if(session.getAttribute("memNo") != null) {
+		if(session.getAttribute("memId") != null) {
 			logger.info("세션 있음");
-			//DMemInfo dMemInfo = memberRepository.findById(Long.parseLong(loginMap.get("mem_no").toString()));
+			DMemInfo memInfo = memberRepository.findByMemId(session.getAttribute("memId").toString());
+			logDto.setMemNo(memInfo.getMemNo());
+			logDto.setMemId(memInfo.getMemNm()+" ["+memInfo.getMemId()+"]");
 		}
 		logDto.setIp(request.getRemoteAddr());
-		logDto.setRequestType(request.getMethod());
+		logDto.setMenuNm(request.getMethod());
 		if(request.getQueryString() != null) {
 			logDto.setRequestUrl(request.getQueryString());
 		}else {

@@ -14,8 +14,7 @@
 </style>
 <body>
 	<button type="button" onclick="location.href='/member/memberList'">멤버리스트</button>
-	<button type="button" onclick="location.href='/user/login'">로그인</button>
-	<script th:inline="javascript">
-	</script>
+	<button type="button" onclick="location.href='/user/login'" th:if="${session['memId'] == null}">로그인</button>
+	<button type="button" onclick="location.href='/user/logout'" th:if="${session['memId'] != null}">로그아웃</button>
 </body>
 </html>

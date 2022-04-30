@@ -1,6 +1,5 @@
 package com.devjitsu.app.app;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,12 +12,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.devjitsu.app.app.log.dto.ConnectLogDTO;
+import com.devjitsu.app.app.log.repository.ConnectLogRepository;
+import com.devjitsu.app.app.member.repository.MemberRepository;
 import com.devjitsu.app.config.Sha256Config;
+import com.devjitsu.app.model.DConnectLog;
+import com.devjitsu.app.model.DMemInfo;
 
 import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class MainContrller {
+	
+	private final MemberRepository memberRepository;
+
+	private final ConnectLogRepository connectLogRepository;
 	
 	@GetMapping("/")
     public String main(){
@@ -32,33 +40,33 @@ public class MainContrller {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/user/loginAction.do")
+	@RequestMapping(value="/user/loginAction")
 	public Map<String,Object> web_login(@RequestParam Map<String, Object> param, HttpSession session, HttpServletRequest request) throws Exception {
-		Map<String, Object> loginMap = new HashMap<String, Object>();;//loginService.selLoginMember(param);
+		DMemInfo memInfo = memberRepository.findByMemId(param.get("memId").toString());
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 
 		boolean chk = true;
 		String message = "";
 		String passWordCheck = checkPassword(param);
 		
-		if(loginMap == null) {
+		if(memInfo == null) {
 			 chk = false;
 			 message = "사용자 정보가 없습니다.";
-		}else if(!passWordCheck.equals(loginMap.get("mem_pw"))){
+		}else if(!passWordCheck.equals(memInfo.getMemPw())){
             chk = false;
             message = "비밀번호가 일치하지 않습니다.";
         }
 		
 		if(chk == true) {
-			Map<String, Object> djConnectMap = new HashMap<String, Object>();
-			djConnectMap.put("memNo", loginMap.get("mem_no"));
-			djConnectMap.put("memId", loginMap.get("mem_id"));
-			djConnectMap.put("ip", request.getRemoteAddr());
-			djConnectMap.put("logType", request.getMethod());
-			djConnectMap.put("logTime", new Date());
-			//loginService.insConnectLog(djConnectMap);
+			ConnectLogDTO connectLogDTO = new ConnectLogDTO();
+			connectLogDTO.setMemNo(memInfo.getMemNo());
+			connectLogDTO.setMemId(memInfo.getMemNm()+" ["+memInfo.getMemId()+"]");
+			connectLogDTO.setIp(request.getRemoteAddr());
+			connectLogDTO.setLogType("LOGIN");
+			DConnectLog dConnectLog = new DConnectLog(connectLogDTO);
+			connectLogRepository.save(dConnectLog);
 			
-			session.setAttribute("memId", loginMap.get("mem_id"));
+			session.setAttribute("memId", memInfo.getMemId());
 		}
 		
 		resultMap.put("check", chk);
@@ -66,18 +74,20 @@ public class MainContrller {
 		
 		return resultMap;
     }
-	@RequestMapping("/user/logout.do")
+	@RequestMapping("/user/logout")
 	public String logout(@RequestParam Map<String, Object> param, HttpSession session, HttpServletRequest request) {
-		Map<String, Object> logMap = new HashMap<String, Object>(); //loginService.selLoginMember(param);
-		param.put("memNo", logMap.get("mem_no"));
-		param.put("ip", request.getRemoteAddr());
-		param.put("logType", "logout");
-		param.put("logTime", new Date());
-		//loginService.insConnectLog(param);
+		DMemInfo memInfo = memberRepository.findByMemId(session.getAttribute("memId").toString());
+		ConnectLogDTO connectLogDTO = new ConnectLogDTO();
+		connectLogDTO.setMemNo(memInfo.getMemNo());
+		connectLogDTO.setMemId(memInfo.getMemNm()+" ["+memInfo.getMemId()+"]");
+		connectLogDTO.setIp(request.getRemoteAddr());
+		connectLogDTO.setLogType("LOGOUT");
+		DConnectLog dConnectLog = new DConnectLog(connectLogDTO);
+		connectLogRepository.save(dConnectLog);
 		
 		session.invalidate();
 		
-		return "redirect:/index.do";
+		return "redirect:/";
 	}
 	
 	//비밀번호 체크
